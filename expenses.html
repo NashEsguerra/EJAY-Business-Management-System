@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>EJAY Printing and Advertising - Expenses</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700;800&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link href="style.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  </head>
+  <body>
+    <aside class="sidebar">
+      <div class="brand-container">
+        <div class="logo-holder">
+          <img
+            src="logo.png"
+            alt="Logo"
+            class="brand-logo"
+            onerror="this.style.display = 'none'"
+          />
+        </div>
+      </div>
+      <nav class="nav-menu">
+        <a class="nav-item" id="nav-dashboard" href="dashboard.html">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span class="nav-text">Dashboard</span>
+        </a>
+        <a class="nav-item" id="nav-sales" href="sales-input.html">
+          <i class="fa-solid fa-file-invoice-dollar"></i>
+          <span class="nav-text">Sales Input</span>
+        </a>
+        <a class="nav-item" id="nav-reports" href="reports.html">
+          <i class="fa-solid fa-chart-line"></i>
+          <span class="nav-text">Monthly Report</span>
+        </a>
+        <a class="nav-item" id="nav-po" href="purchase-order.html">
+          <i class="fa-solid fa-file-contract"></i>
+          <span class="nav-text">Purchase Order</span>
+        </a>
+        <a class="nav-item" id="nav-inventory" href="inventory.html">
+          <i class="fa-solid fa-boxes-stacked"></i>
+          <span class="nav-text">Inventory</span>
+        </a>
+        <a class="nav-item active" id="nav-expenses" href="expenses.html">
+          <i class="fa-solid fa-money-bill-wave"></i>
+          <span class="nav-text">Expenses</span>
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-badge">
+          <i class="fa-solid fa-circle-user"></i>
+          <span id="logged-in-user">Admin</span>
+        </div>
+        <a
+          class="nav-item logout-item"
+          id="nav-logout"
+          href="#"
+          onclick="
+            ejayLogout();
+            return false;
+          "
+        >
+          <i class="fa-solid fa-right-from-bracket"></i>
+          <span class="nav-text">Log Out</span>
+        </a>
+      </div>
+    </aside>
+
+    <div class="main-wrapper">
+      <header class="top-navbar">
+        <div class="page-title" id="current-view-title">Expenses</div>
+        <div class="date-badge">
+          <i class="fa-regular fa-calendar"></i>
+          <span id="live-date-str">-- --, ----</span>
+        </div>
+      </header>
+
+      <main class="content-body">
+        <div class="view-panel active" id="expenses-view">
+          <div class="glass-card form-container">
+            <form id="expense-master-form">
+              <input id="exp-edit-id" type="hidden" value="" />
+              <div class="form-grid">
+                <div class="input-group">
+                  <label>Date</label>
+                  <input id="exp-date" required="" type="date" />
+                </div>
+                <div class="input-group">
+                  <label>Category</label>
+                  <select id="exp-category" required="">
+                    <option value="Non-Vat">Non-Vat</option>
+                    <option value="Other Expenses">
+                      Other Expenses (No Receipt)
+                    </option>
+                  </select>
+                </div>
+                <div class="input-group">
+                  <label>OR/Sales #</label>
+                  <input
+                    id="exp-or-num"
+                    placeholder="e.g. OR-00123"
+                    type="text"
+                  />
+                </div>
+                <div class="input-group">
+                  <label>TIN#</label>
+                  <input
+                    id="exp-tin"
+                    placeholder="e.g. 123-456-789-000"
+                    type="text"
+                  />
+                </div>
+                <div class="input-group">
+                  <label>Gross Amount (₱)</label>
+                  <input
+                    id="exp-gross"
+                    min="0"
+                    placeholder="0.00"
+                    required=""
+                    step="0.01"
+                    type="number"
+                  />
+                </div>
+                <div class="input-group">
+                  <label>Remarks / Description</label>
+                  <input
+                    id="exp-remarks"
+                    placeholder="Optional notes"
+                    type="text"
+                  />
+                </div>
+              </div>
+              <p
+                class="mv-stock-preview"
+                id="exp-receipt-hint"
+                style="display: none"
+              >
+                <i class="fa-solid fa-circle-info"></i> "Other Expenses"
+                category — no OR/Sales # or TIN# required (no receipt).
+              </p>
+              <div class="form-actions">
+                <button
+                  class="btn btn-muted"
+                  id="btn-clear-expense"
+                  type="button"
+                >
+                  <i class="fa-solid fa-broom"></i> Clear
+                </button>
+                <button
+                  class="btn btn-danger"
+                  id="btn-delete-expense"
+                  style="display: none"
+                  type="button"
+                >
+                  <i class="fa-solid fa-trash-can"></i> Delete
+                </button>
+                <button
+                  class="btn btn-violet"
+                  id="btn-submit-expense"
+                  type="submit"
+                >
+                  <i class="fa-solid fa-floppy-disk"></i> Save Expense
+                </button>
+              </div>
+            </form>
+          </div>
+          <div class="glass-card" style="margin-bottom: 30px">
+            <div class="report-filter-bar">
+              <div class="input-group" style="width: 250px">
+                <label>Filter Statement Month</label>
+                <input id="expense-month-picker" type="month" />
+              </div>
+              <button class="btn btn-violet" id="btn-export-expenses-pdf">
+                <i class="fa-solid fa-file-pdf"></i> Generate PDF Report
+              </button>
+            </div>
+          </div>
+          <div class="glass-card">
+            <div class="table-controls">
+              <h3 style="font-weight: 700; font-size: 1.1rem">
+                Expenses Master Log
+              </h3>
+              <div class="search-wrapper">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input
+                  id="expense-search-input"
+                  placeholder="Search OR#, TIN#, or Remarks..."
+                  type="text"
+                />
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>OR/Sales #</th>
+                    <th>TIN#</th>
+                    <th>Gross Amount</th>
+                    <th>Remarks</th>
+                    <th style="text-align: center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="expenses-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <div
+      id="printable-expenses-area"
+      style="display: none; background: #ffffff; color: #111827; width: 100%"
+    >
+      <div class="pdf-wrapper">
+        <div class="pdf-header">
+          <div class="pdf-brand-block">
+            <div class="pdf-logo-holder">
+              <img
+                alt="Logo"
+                class="pdf-logo-img"
+                onerror="this.style.display = 'none'"
+                src="logo.png"
+              />
+            </div>
+            <div class="pdf-company-details"></div>
+          </div>
+          <div class="pdf-meta-block">
+            <div class="pdf-meta-badge">
+              EXPENSES REPORT
+            </div>
+            <p>
+              <strong>Generated On:</strong>
+              <span id="pdf-exp-generation-timestamp">-</span>
+            </p>
+            <p>
+              <strong>Statement Period:</strong>
+              <span id="pdf-exp-target-month">-</span>
+            </p>
+          </div>
+        </div>
+        <div class="pdf-divider"></div>
+        <div class="pdf-summary-grid">
+          <div class="pdf-card card-gross">
+            <span class="pdf-card-label">TOTAL GROSS EXPENSES</span
+            ><span class="pdf-card-value" id="pdf-exp-total-gross">₱0.00</span>
+          </div>
+          <div class="pdf-card card-gcash">
+            <span class="pdf-card-label">TOTAL NON-VAT</span
+            ><span class="pdf-card-value" id="pdf-exp-total-nonvat">₱0.00</span>
+          </div>
+          <div class="pdf-card card-five-percent">
+            <span class="pdf-card-label">TOTAL OTHER EXPENSES</span
+            ><span class="pdf-card-value" id="pdf-exp-total-other">₱0.00</span>
+          </div>
+          <div class="pdf-card card-receivable">
+            <span class="pdf-card-label">TOTAL TRANSACTIONS</span
+            ><span class="pdf-card-value" id="pdf-exp-total-tx">0</span>
+          </div>
+        </div>
+        <div class="pdf-table-section">
+          <h3>EJAY Printing Services Expenses Log</h3>
+          <table class="pdf-data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Category</th>
+                <th>OR/Sales #</th>
+                <th>TIN#</th>
+                <th class="num-col">Gross Amount</th>
+                <th>Remarks</th>
+              </tr>
+            </thead>
+            <tbody id="pdf-exp-rows-container"></tbody>
+          </table>
+        </div>
+        <div class="pdf-footer-signatures">
+          <div class="signature-box">
+            <div class="sig-line"></div>
+            <p class="sig-name">Prepared by</p>
+            <p class="sig-role">EJAY Printing &amp; Advertising</p>
+          </div>
+          <div class="signature-box">
+            <div class="sig-line"></div>
+            <p class="sig-name">Approved by</p>
+            <p class="sig-role">EJAY Printing &amp; Advertising</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EDIT MODAL FOR EXPENSES -->
+    <div class="custom-modal edit-modal" id="expense-edit-modal" style="display: none;">
+        <div class="modal-backdrop" onclick="closeExpenseEditModal()"></div>
+        <div class="modal-wrapper-box glass-card">
+            <div class="modal-header-section">
+                <h3 style="color: #F5A623; font-weight: 700;">Edit Expense Record</h3>
+                <button class="btn-close-modal" onclick="closeExpenseEditModal()" type="button">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body-content">
+                <form id="expense-edit-form">
+                    <input id="edit-exp-index-id" type="hidden" value=""/>
+                    <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                        <div class="input-group">
+                            <label>Date</label>
+                            <input id="edit-exp-date" required="" type="date"/>
+                        </div>
+                        <div class="input-group">
+                            <label>Category</label>
+                            <select id="edit-exp-category" required="">
+                                <option value="Non-Vat">Non-Vat</option>
+                                <option value="Other Expenses">Other Expenses</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                        <div class="input-group">
+                            <label>OR / Sales Invoice #</label>
+                            <input id="edit-exp-ornum" placeholder="e.g. OR-00123" required="" type="text"/>
+                        </div>
+                        <div class="input-group">
+                            <label>TIN #</label>
+                            <input id="edit-exp-tin" placeholder="e.g. 123-456-789-000" required="" type="text"/>
+                        </div>
+                    </div>
+                    <div class="form-grid" style="grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px;">
+                        <div class="input-group">
+                            <label>Gross Amount (₱)</label>
+                            <input id="edit-exp-gross" min="0" placeholder="0.00" required="" step="0.01" type="number"/>
+                        </div>
+                        <div class="input-group">
+                            <label>Remarks / Description</label>
+                            <input id="edit-exp-remarks" placeholder="Optional notes" type="text"/>
+                        </div>
+                    </div>
+                    <p class="mv-stock-preview" id="edit-exp-receipt-hint" style="display:none; margin-bottom: 15px;">
+                        <i class="fa-solid fa-circle-info"></i> "Other Expenses" category — no OR/Sales # or TIN# required (no receipt).
+                    </p>
+                    <div class="form-actions" style="display: flex; justify-content: flex-end; gap: 10px;">
+                        <button class="btn btn-muted" onclick="closeExpenseEditModal()" type="button">Cancel</button>
+                        <button class="btn btn-violet" type="submit">
+                            <i class="fa-solid fa-floppy-disk"></i> Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
+

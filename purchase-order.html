@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EJAY Printing and Advertising - Create Purchase Order</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<link href="style.css" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="brand-container">
+            <div class="logo-holder">
+                <img src="logo.png" alt="Logo" class="brand-logo" onerror="this.style.display='none';">
+            </div>
+        </div>
+        <nav class="nav-menu">
+            <a class="nav-item" id="nav-dashboard" href="dashboard.html">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span class="nav-text">Dashboard</span>
+            </a>
+            <a class="nav-item" id="nav-sales" href="sales-input.html">
+                <i class="fa-solid fa-file-invoice-dollar"></i>
+                <span class="nav-text">Sales Input</span>
+            </a>
+            <a class="nav-item" id="nav-reports" href="reports.html">
+                <i class="fa-solid fa-chart-line"></i>
+                <span class="nav-text">Monthly Report</span>
+            </a>
+            <a class="nav-item active" id="nav-po" href="purchase-order.html">
+                <i class="fa-solid fa-file-contract"></i>
+                <span class="nav-text">Purchase Order</span>
+            </a>
+            <a class="nav-item" id="nav-inventory" href="inventory.html">
+                <i class="fa-solid fa-boxes-stacked"></i>
+                <span class="nav-text">Inventory</span>
+            </a>
+            <a class="nav-item" id="nav-expenses" href="expenses.html">
+                <i class="fa-solid fa-money-bill-wave"></i>
+                <span class="nav-text">Expenses</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-badge">
+                <i class="fa-solid fa-circle-user"></i>
+                <span id="logged-in-user">Admin</span>
+            </div>
+            <a class="nav-item logout-item" id="nav-logout" href="#" onclick="ejayLogout(); return false;">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span class="nav-text">Log Out</span>
+            </a>
+        </div>
+    </aside>
+
+    <div class="main-wrapper">
+
+        <header class="top-navbar">
+            <div class="page-title" id="current-view-title">Create Purchase Order</div>
+            <div class="date-badge">
+                <i class="fa-regular fa-calendar"></i>
+                <span id="live-date-str">-- --, ----</span>
+            </div>
+        </header>
+
+        <main class="content-body">
+
+            <div class="view-panel active" id="po-view">
+<div class="glass-card form-container">
+<form id="po-master-form">
+<input id="po-edit-index" type="hidden" value=""/>
+<div class="form-grid" style="margin-bottom: 20px;">
+<div class="input-group">
+<label>PO Number</label>
+<input id="po-num" placeholder="e.g. 1" required="" type="text"/>
+</div>
+<div class="input-group">
+<label>PO Date</label>
+<input id="po-date" required="" type="date"/>
+</div>
+<div class="input-group">
+<label>Target Completion Date</label>
+<input id="po-completion" required="" type="date"/>
+</div>
+<div class="input-group">
+<label>Client / Company Name</label>
+<input id="po-supplier" placeholder="e.g. Western Advertising" required="" type="text"/>
+</div>
+<div class="input-group">
+<label>Client Contact Person</label>
+<input id="po-contact-person" placeholder="e.g. Joanne Chong" required="" type="text"/>
+</div>
+<div class="input-group">
+<label>Client Phone Number</label>
+<input id="po-phone" placeholder="e.g. 0917XXXXXXX" required="" type="text"/>
+</div>
+</div>
+<h4 style="margin-bottom: 10px; color: var(--violet-accent);">Order Item Lines</h4>
+<div id="po-items-container">
+<!-- Unang line/row default -->
+<div class="form-grid po-item-row" style="grid-template-columns: 3fr 1fr 1fr 1fr; margin-bottom: 10px;">
+<div class="input-group"><input class="item-desc" placeholder="Description (e.g. DTF)" required="" type="text"/></div>
+<div class="input-group"><input class="item-qty" min="1" placeholder="Qty" required="" type="number"/></div>
+<div class="input-group"><input class="item-unit" placeholder="Unit (e.g. PCS)" required="" type="text"/></div>
+<div class="input-group"><input class="item-price" placeholder="Unit Price" required="" step="0.01" type="number"/></div>
+</div>
+</div>
+<button class="btn btn-muted" id="btn-add-po-line" style="padding: 8px 16px; font-size: 0.85rem; margin-top: 10px;" type="button">
+<i class="fa-solid fa-plus"></i> Add Item Line
+</button>
+
+<!-- Tax Options Toggle -->
+<div class="po-tax-options" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--glass-border);">
+    <h4 style="margin-bottom: 12px; color: var(--violet-accent); font-size: 0.95rem;">
+        <i class="fa-solid fa-calculator" style="margin-right: 8px;"></i> Tax Summary
+    </h4>
+    <div style="display: flex; gap: 30px; flex-wrap: wrap; align-items: center;">
+        <label class="tax-toggle-label">
+            <input type="checkbox" id="po-apply-vat" class="tax-checkbox"/>
+            <span class="tax-toggle-switch"></span>
+            Apply 12% VAT
+        </label>
+        <label class="tax-toggle-label">
+            <input type="checkbox" id="po-apply-ewt" class="tax-checkbox"/>
+            <span class="tax-toggle-switch"></span>
+            Apply 2% EWT
+        </label>
+    </div>
+    <!-- Live Tax Preview (optional, shown when checkboxes change) -->
+    <div id="po-tax-preview" style="margin-top: 14px; display: none;"></div>
+</div>
+
+<div class="form-actions">
+<button class="btn btn-muted" id="btn-clear-po" type="button">
+<i class="fa-solid fa-broom"></i> Clear Form
+</button>
+<button class="btn btn-danger" id="btn-delete-po" style="display:none;" type="button">
+<i class="fa-solid fa-trash-can"></i> Delete
+</button>
+<button class="btn btn-muted" id="btn-download-po-pdf" type="button">
+<i class="fa-solid fa-file-pdf"></i> Download PDF
+</button>
+<button class="btn btn-violet" id="btn-submit-po" type="submit">
+<i class="fa-solid fa-floppy-disk"></i> Save PO
+</button>
+</div>
+</form>
+</div>
+<div class="glass-card">
+<div class="table-controls">
+<h3 style="font-weight: 700; font-size: 1.1rem;">PO Master Log</h3>
+<div class="search-wrapper">
+<i class="fa-solid fa-magnifying-glass"></i>
+<input id="po-table-search-input" placeholder="Search PO No., Client, or Contact Person..." type="text"/>
+</div>
+</div>
+<div class="table-responsive">
+<table class="data-table">
+<thead>
+<tr>
+<th>PO No.</th>
+<th>PO Date</th>
+<th>Target Completion</th>
+<th>Client / Company</th>
+<th>Contact Person</th>
+<th>Phone</th>
+<th>Total Amount</th>
+<th style="text-align: center;">Actions</th>
+</tr>
+</thead>
+<tbody id="po-table-body"></tbody>
+</table>
+</div>
+</div>
+</div>
+
+        </main>
+    </div>
+
+    <div id="printable-po-area" style="display: none; background: #ffffff; color: #111827; width: 100%;">
+<div class="pdf-wrapper">
+<div class="pdf-header">
+<div class="pdf-brand-block">
+<div class="pdf-logo-holder">
+<img alt="Logo" class="pdf-logo-img" onerror="this.style.display='none';" src="logo.png"/>
+</div>
+<div class="pdf-company-details"></div>
+</div>
+<div class="pdf-meta-block">
+<div class="pdf-meta-badge">PURCHASE ORDER</div>
+</div>
+</div>
+<div class="pdf-divider"></div>
+<!-- Metadata Table -->
+<div class="po-no-break">
+<table style="width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 15px; border: 1px solid #d1d5db;">
+<tr>
+<td style="padding: 8px; background: #f3f4f6; font-weight: bold; border: 1px solid #d1d5db; width: 15%;">PO Number:</td>
+<td id="pdf-po-num" style="padding: 8px; border: 1px solid #d1d5db; width: 18%; font-weight: 700;">-</td>
+<td style="padding: 8px; background: #f3f4f6; font-weight: bold; border: 1px solid #d1d5db; width: 15%;">PO Date:</td>
+<td id="pdf-po-date" style="padding: 8px; border: 1px solid #d1d5db; width: 18%;">-</td>
+<td style="padding: 8px; background: #f3f4f6; font-weight: bold; border: 1px solid #d1d5db; width: 15%;">Target Completion Date:</td>
+<td id="pdf-po-completion" style="padding: 8px; border: 1px solid #d1d5db; width: 19%;">-</td>
+</tr>
+<tr>
+<td style="padding: 8px; background: #f3f4f6; font-weight: bold; border: 1px solid #d1d5db;">Client / Company Name:</td>
+<td id="pdf-po-supplier" style="padding: 8px; border: 1px solid #d1d5db; font-weight: 600;">-</td>
+<td style="padding: 8px; background: #f3f4f6; font-weight: bold; border: 1px solid #d1d5db;">Client Contact Person:</td>
+<td id="pdf-po-contact-person" style="padding: 8px; border: 1px solid #d1d5db;">-</td>
+<td style="padding: 8px; background: #f3f4f6; font-weight: bold; border: 1px solid #d1d5db;">Client Phone Number:</td>
+<td id="pdf-po-phone" style="padding: 8px; border: 1px solid #d1d5db;">-</td>
+</tr>
+</table>
+</div>
+<div class="po-no-break pdf-table-section">
+<table class="pdf-data-table">
+<thead>
+<tr>
+<th>Description / Specifications</th>
+<th style="text-align: center; width: 10%;">Qty</th>
+<th style="text-align: center; width: 12%;">Unit</th>
+<th class="num-col" style="width: 15%;">Unit Price</th>
+<th class="num-col" style="width: 15%;">Total</th>
+</tr>
+</thead>
+<tbody id="pdf-po-items-rows"></tbody>
+</table>
+</div>
+
+<!-- Grand Total + Tax Summary stacked on the right -->
+<div class="po-no-break pdf-totals-container">
+    <div class="pdf-totals-box">
+        <table id="pdf-tax-summary-table" class="pdf-totals-table">
+            <tbody>
+                <tr>
+                    <td>Subtotal</td>
+                    <td id="pdf-tax-subtotal" class="val">₱0.00</td>
+                </tr>
+                <tr id="pdf-tax-vat-row" style="display: none;">
+                    <td>VAT (12%)</td>
+                    <td id="pdf-tax-vat" class="val" style="color: #2F3192;">₱0.00</td>
+                </tr>
+                <tr id="pdf-tax-amount-row" style="display: none;">
+                    <td style="font-weight: 700;">Total with VAT</td>
+                    <td id="pdf-tax-amount" class="val" style="font-weight: 700;">₱0.00</td>
+                </tr>
+                <tr id="pdf-tax-ewt-row" style="display: none;">
+                    <td style="color: #ef4444;">Less: EWT (2%)</td>
+                    <td id="pdf-tax-ewt" class="val" style="color: #ef4444;">₱0.00</td>
+                </tr>
+                <tr id="pdf-tax-net-row" class="grand-total-row">
+                    <td>Grand Total</td>
+                    <td id="pdf-tax-net" class="val">₱0.00</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <!-- Fallback simple total table when no tax is applied -->
+        <table id="pdf-grand-total-table" class="pdf-totals-table">
+            <tbody>
+                <tr class="grand-total-row">
+                    <td>Grand Total</td>
+                    <td id="pdf-po-grand-total" class="val">₱0.00</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Dynamic Authorizations Footer -->
+<div class="po-no-break pdf-footer-signatures">
+<div class="signature-box">
+<div class="sig-line"></div>
+<p class="sig-name">Authorized Signature</p>
+<p class="sig-role">EJAY Printing & Advertising</p>
+</div>
+<div class="signature-box">
+<div class="sig-line"></div>
+<p class="sig-name">CLIENT ACKNOWLEDGEMENT</p>
+<p class="sig-role">Sign over Printed Name</p>
+</div>
+</div>
+</div>
+</div>
+
+    <!-- PO EDIT MODAL -->
+    <div class="custom-modal edit-modal" id="po-edit-modal" style="display: none;">
+        <div class="modal-backdrop" onclick="closePoEditModal()"></div>
+        <div class="modal-wrapper-box glass-card">
+            <div class="modal-header-section">
+                <h3 id="po-edit-modal-title" style="color: #F5A623; font-weight: 700;">Edit Purchase Order</h3>
+                <button class="btn-close-modal" onclick="closePoEditModal()" type="button">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body-content">
+                <form id="po-edit-form">
+                    <input id="edit-po-index" type="hidden" value=""/>
+                    <div class="form-grid" style="margin-bottom: 20px;">
+                        <div class="input-group">
+                            <label>PO Number</label>
+                            <input id="edit-po-num" placeholder="e.g. 1" required="" type="text"/>
+                        </div>
+                        <div class="input-group">
+                            <label>PO Date</label>
+                            <input id="edit-po-date" required="" type="date"/>
+                        </div>
+                        <div class="input-group">
+                            <label>Target Completion Date</label>
+                            <input id="edit-po-completion" required="" type="date"/>
+                        </div>
+                        <div class="input-group">
+                            <label>Client / Company Name</label>
+                            <input id="edit-po-supplier" placeholder="e.g. Western Advertising" required="" type="text"/>
+                        </div>
+                        <div class="input-group">
+                            <label>Client Contact Person</label>
+                            <input id="edit-po-contact-person" placeholder="e.g. Joanne Chong" required="" type="text"/>
+                        </div>
+                        <div class="input-group">
+                            <label>Client Phone Number</label>
+                            <input id="edit-po-phone" placeholder="e.g. 0917XXXXXXX" required="" type="text"/>
+                        </div>
+                    </div>
+                    <h4 style="margin-bottom: 10px; color: var(--violet-accent);">Order Item Lines</h4>
+                    <div id="edit-po-items-container"></div>
+                    <button class="btn btn-muted" onclick="addEditPoItemLine()" style="padding: 8px 16px; font-size: 0.85rem; margin-top: 10px;" type="button">
+                        <i class="fa-solid fa-plus"></i> Add Item Line
+                    </button>
+                    <div class="po-tax-options" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--glass-border);">
+                        <h4 style="margin-bottom: 12px; color: var(--violet-accent); font-size: 0.95rem;">
+                            <i class="fa-solid fa-calculator" style="margin-right: 8px;"></i> Tax Summary
+                        </h4>
+                        <div style="display: flex; gap: 30px; flex-wrap: wrap; align-items: center;">
+                            <label class="tax-toggle-label">
+                                <input type="checkbox" id="edit-po-apply-vat" class="tax-checkbox"/>
+                                <span class="tax-toggle-switch"></span>
+                                Apply 12% VAT
+                            </label>
+                            <label class="tax-toggle-label">
+                                <input type="checkbox" id="edit-po-apply-ewt" class="tax-checkbox"/>
+                                <span class="tax-toggle-switch"></span>
+                                Apply 2% EWT
+                            </label>
+                        </div>
+                        <div id="edit-po-tax-preview" style="margin-top: 14px; display: none;"></div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-muted" onclick="closePoEditModal()" type="button">
+                            <i class="fa-solid fa-xmark"></i> Cancel
+                        </button>
+                        <button class="btn btn-danger" id="edit-po-btn-delete" type="button">
+                            <i class="fa-solid fa-trash-can"></i> Delete
+                        </button>
+                        <button class="btn btn-violet" type="submit">
+                            <i class="fa-solid fa-floppy-disk"></i> Update PO
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

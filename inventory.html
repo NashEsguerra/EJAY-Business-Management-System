@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EJAY Printing and Advertising - Inventory Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<link href="style.css" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="brand-container">
+            <div class="logo-holder">
+                <img src="logo.png" alt="Logo" class="brand-logo" onerror="this.style.display='none';">
+            </div>
+        </div>
+        <nav class="nav-menu">
+            <a class="nav-item" id="nav-dashboard" href="dashboard.html">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span class="nav-text">Dashboard</span>
+            </a>
+            <a class="nav-item" id="nav-sales" href="sales-input.html">
+                <i class="fa-solid fa-file-invoice-dollar"></i>
+                <span class="nav-text">Sales Input</span>
+            </a>
+            <a class="nav-item" id="nav-reports" href="reports.html">
+                <i class="fa-solid fa-chart-line"></i>
+                <span class="nav-text">Monthly Report</span>
+            </a>
+            <a class="nav-item" id="nav-po" href="purchase-order.html">
+                <i class="fa-solid fa-file-contract"></i>
+                <span class="nav-text">Purchase Order</span>
+            </a>
+            <a class="nav-item active" id="nav-inventory" href="inventory.html">
+                <i class="fa-solid fa-boxes-stacked"></i>
+                <span class="nav-text">Inventory</span>
+            </a>
+            <a class="nav-item" id="nav-expenses" href="expenses.html">
+                <i class="fa-solid fa-money-bill-wave"></i>
+                <span class="nav-text">Expenses</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-badge">
+                <i class="fa-solid fa-circle-user"></i>
+                <span id="logged-in-user">Admin</span>
+            </div>
+            <a class="nav-item logout-item" id="nav-logout" href="#" onclick="ejayLogout(); return false;">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span class="nav-text">Log Out</span>
+            </a>
+        </div>
+    </aside>
+
+    <div class="main-wrapper">
+
+        <header class="top-navbar">
+            <div class="page-title" id="current-view-title">Inventory Management</div>
+            <div class="date-badge">
+                <i class="fa-regular fa-calendar"></i>
+                <span id="live-date-str">-- --, ----</span>
+            </div>
+        </header>
+
+        <main class="content-body">
+
+            <div class="view-panel active" id="inventory-view">
+<div class="inv-summary-grid" id="inv-summary-grid" style="margin-bottom: 30px;"></div>
+<div class="subtab-nav">
+<button class="subtab-btn active" data-subtab="materials" type="button">
+<i class="fa-solid fa-cubes"></i> Materials
+                    </button>
+<button class="subtab-btn" data-subtab="movement" type="button">
+<i class="fa-solid fa-right-left"></i> Stock In / Out
+                    </button>
+<button class="subtab-btn" data-subtab="history" type="button">
+<i class="fa-solid fa-clock-rotate-left"></i> Transaction History
+                    </button>
+</div>
+<!-- MATERIALS SUBTAB -->
+<div class="subtab-panel active" id="subtab-materials">
+<div class="glass-card form-container">
+<form id="material-form">
+<input id="material-edit-id" type="hidden" value=""/>
+<div class="form-grid">
+<div class="input-group">
+<label>Material Code / SKU</label>
+<input id="mat-code" placeholder="e.g. MAT-001" required="" type="text"/>
+</div>
+<div class="input-group">
+<label>Material Name</label>
+<input id="mat-name" placeholder="e.g. Tarpaulin (Glossy)" required="" type="text"/>
+</div>
+<div class="input-group">
+<label>Category</label>
+<input id="mat-category" placeholder="e.g. Print Media" required="" type="text"/>
+</div>
+<div class="input-group">
+<label>Unit of Measure</label>
+<input id="mat-unit" placeholder="e.g. pcs, roll, kg, liter" required="" type="text"/>
+</div>
+<div class="input-group">
+<label>Opening Stock</label>
+<input id="mat-opening-stock" min="0" step="0.01" type="number" value="0"/>
+</div>
+<div class="input-group">
+<label>Reorder Level</label>
+<input id="mat-reorder" min="0" placeholder="Low stock alert threshold" step="0.01" type="number" value="0"/>
+</div>
+<div class="input-group">
+<label>Unit Cost (₱)</label>
+<input id="mat-cost" min="0" placeholder="Optional" step="0.01" type="number" value="0.00"/>
+</div>
+</div>
+<div class="form-actions">
+<button class="btn btn-muted" id="btn-clear-material" type="button">
+<i class="fa-solid fa-broom"></i> Clear
+                                </button>
+<button class="btn btn-danger" id="btn-delete-material" style="display:none;" type="button">
+<i class="fa-solid fa-trash-can"></i> Delete
+                                </button>
+<button class="btn btn-violet" id="btn-submit-material" type="submit">
+<i class="fa-solid fa-floppy-disk"></i> Save Material
+                                </button>
+</div>
+</form>
+</div>
+<div class="glass-card">
+<div class="table-controls">
+<h3 style="font-weight: 700; font-size: 1.1rem;">Materials Master List</h3>
+<div class="search-wrapper">
+<i class="fa-solid fa-magnifying-glass"></i>
+<input id="material-search-input" placeholder="Search code, name, or category..." type="text"/>
+</div>
+</div>
+<div class="table-responsive">
+<table class="data-table">
+<thead>
+<tr>
+<th>Code</th>
+<th>Material Name</th>
+<th>Category</th>
+<th>Unit</th>
+<th>Current Stock</th>
+<th>Reorder Level</th>
+<th>Unit Cost</th>
+<th>Status</th>
+<th style="text-align: center;">Actions</th>
+</tr>
+</thead>
+<tbody id="materials-table-body"></tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- STOCK MOVEMENT SUBTAB -->
+<div class="subtab-panel" id="subtab-movement">
+<div class="glass-card form-container">
+<form id="movement-form">
+<div class="form-grid">
+<div class="input-group">
+<label>Material</label>
+<select id="mv-material" required="">
+<option value="">-- Select Material --</option>
+</select>
+</div>
+<div class="input-group">
+<label>Movement Type</label>
+<select id="mv-type" required="">
+<option value="IN">Stock In (Receiving)</option>
+<option value="OUT">Stock Out (Usage / Release)</option>
+</select>
+</div>
+<div class="input-group">
+<label>Quantity</label>
+<input id="mv-qty" min="0.01" required="" step="0.01" type="number"/>
+</div>
+<div class="input-group">
+<label>Date</label>
+<input id="mv-date" required="" type="date"/>
+</div>
+<div class="input-group">
+<label>Reference No.</label>
+<input id="mv-reference" placeholder="e.g. PO-1024 or Job Order #12" type="text"/>
+</div>
+<div class="input-group">
+<label>Remarks</label>
+<input id="mv-remarks" placeholder="Optional notes" type="text"/>
+</div>
+</div>
+<div class="mv-stock-preview" id="mv-stock-preview">
+<i class="fa-solid fa-circle-info"></i> Select a material to view its current stock level.
+                            </div>
+<div class="form-actions">
+<button class="btn btn-muted" id="btn-clear-movement" type="button">
+<i class="fa-solid fa-broom"></i> Clear
+                                </button>
+<button class="btn btn-violet" type="submit">
+<i class="fa-solid fa-right-left"></i> Record Movement
+                                </button>
+</div>
+</form>
+</div>
+<div class="glass-card">
+<h3 style="margin-bottom: 20px; font-weight: 700; font-size: 1.1rem;">Recent Movements</h3>
+<div class="table-responsive">
+<table class="data-table">
+<thead>
+<tr>
+<th>Date</th>
+<th>Material</th>
+<th>Type</th>
+<th>Qty</th>
+<th>Balance After</th>
+<th>Reference</th>
+</tr>
+</thead>
+<tbody id="recent-movements-body"></tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- TRANSACTION HISTORY SUBTAB -->
+<div class="subtab-panel" id="subtab-history">
+<div class="glass-card" style="margin-bottom: 25px;">
+<div class="report-filter-bar" style="flex-wrap: wrap;">
+<div class="input-group" style="width: 200px;">
+<label>Material</label>
+<select id="hist-filter-material">
+<option value="">All Materials</option>
+</select>
+</div>
+<div class="input-group" style="width: 150px;">
+<label>Type</label>
+<select id="hist-filter-type">
+<option value="">All Types</option>
+<option value="IN">Stock In</option>
+<option value="OUT">Stock Out</option>
+</select>
+</div>
+<div class="input-group" style="width: 165px;">
+<label>From Date</label>
+<input id="hist-filter-from" type="date"/>
+</div>
+<div class="input-group" style="width: 165px;">
+<label>To Date</label>
+<input id="hist-filter-to" type="date"/>
+</div>
+<button class="btn btn-muted" id="btn-reset-history-filter" type="button">
+<i class="fa-solid fa-filter-circle-xmark"></i> Reset
+                            </button>
+<button class="btn btn-violet" id="btn-export-inventory-pdf" type="button">
+<i class="fa-solid fa-file-pdf"></i> Generate PDF Report
+                            </button>
+</div>
+</div>
+<div class="glass-card">
+<div class="table-controls">
+<h3 style="font-weight: 700; font-size: 1.1rem;">Stock Movement Transaction Log</h3>
+<div class="search-wrapper">
+<i class="fa-solid fa-magnifying-glass"></i>
+<input id="history-search-input" placeholder="Search material or reference..." type="text"/>
+</div>
+</div>
+<div class="table-responsive">
+<table class="data-table">
+<thead>
+<tr>
+<th>Date</th>
+<th>Material</th>
+<th>Category</th>
+<th>Type</th>
+<th>Qty</th>
+<th>Balance After</th>
+<th>Reference</th>
+<th>Remarks</th>
+</tr>
+</thead>
+<tbody id="history-table-body"></tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+
+        </main>
+    </div>
+
+    <div id="printable-inventory-area" style="display: none; background: #ffffff; color: #111827; width: 100%;">
+<div class="pdf-wrapper">
+<div class="pdf-header">
+<div class="pdf-brand-block">
+<div class="pdf-logo-holder">
+<img alt="Logo" class="pdf-logo-img" onerror="this.style.display='none';" src="logo.png"/>
+</div>
+<div class="pdf-company-details"></div>
+</div>
+<div class="pdf-meta-block">
+<div class="pdf-meta-badge">INVENTORY REPORT</div>
+<p><strong>Generated On:</strong> <span id="pdf-inv-generation-timestamp">-</span></p>
+<p><strong>Coverage:</strong> <span id="pdf-inv-coverage">-</span></p>
+</div>
+</div>
+<div class="pdf-divider"></div>
+<div class="pdf-summary-grid">
+<div class="pdf-card card-gross"><span class="pdf-card-label">Total Materials</span><span class="pdf-card-value" id="pdf-inv-total-materials">0</span></div>
+<div class="pdf-card card-cash"><span class="pdf-card-label">Stock In (Qty)</span><span class="pdf-card-value" id="pdf-inv-total-in">0</span></div>
+<div class="pdf-card card-receivable"><span class="pdf-card-label">Stock Out (Qty)</span><span class="pdf-card-value" id="pdf-inv-total-out">0</span></div>
+<div class="pdf-card card-five-percent"><span class="pdf-card-label">Low Stock Items</span><span class="pdf-card-value" id="pdf-inv-low-stock">0</span></div>
+<div class="pdf-card card-gcash"><span class="pdf-card-label">Total Stock Value</span><span class="pdf-card-value" id="pdf-inv-stock-value">₱0.00</span></div>
+</div>
+<div class="pdf-table-section">
+<h3>Stock Movement Transactions</h3>
+<table class="pdf-data-table">
+<thead>
+<tr>
+<th>Date</th>
+<th>Material</th>
+<th>Category</th>
+<th style="text-align: center;">Type</th>
+<th class="num-col">Qty</th>
+<th class="num-col">Balance After</th>
+<th>Reference</th>
+<th>Remarks</th>
+</tr>
+</thead>
+<tbody id="pdf-inv-movement-rows"></tbody>
+</table>
+</div>
+<div class="pdf-table-section">
+<h3>Current Stock Levels Summary</h3>
+<table class="pdf-data-table">
+<thead>
+<tr>
+<th>Code</th>
+<th>Material Name</th>
+<th>Category</th>
+<th style="text-align: center;">Unit</th>
+<th class="num-col">Current Stock</th>
+<th class="num-col">Reorder Level</th>
+<th style="text-align: center;">Status</th>
+</tr>
+</thead>
+<tbody id="pdf-inv-stock-rows"></tbody>
+</table>
+</div>
+<!-- No signatures for inventory report -->
+</div>
+</div>
+
+    <script src="app.js"></script>
+</body>
+</html>

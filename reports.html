@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EJAY Printing and Advertising - Performance Reports Export</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<link href="style.css" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="brand-container">
+            <div class="logo-holder">
+                <img src="logo.png" alt="Logo" class="brand-logo" onerror="this.style.display='none';">
+            </div>
+        </div>
+        <nav class="nav-menu">
+            <a class="nav-item" id="nav-dashboard" href="dashboard.html">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span class="nav-text">Dashboard</span>
+            </a>
+            <a class="nav-item" id="nav-sales" href="sales-input.html">
+                <i class="fa-solid fa-file-invoice-dollar"></i>
+                <span class="nav-text">Sales Input</span>
+            </a>
+            <a class="nav-item active" id="nav-reports" href="reports.html">
+                <i class="fa-solid fa-chart-line"></i>
+                <span class="nav-text">Monthly Report</span>
+            </a>
+            <a class="nav-item" id="nav-po" href="purchase-order.html">
+                <i class="fa-solid fa-file-contract"></i>
+                <span class="nav-text">Purchase Order</span>
+            </a>
+            <a class="nav-item" id="nav-inventory" href="inventory.html">
+                <i class="fa-solid fa-boxes-stacked"></i>
+                <span class="nav-text">Inventory</span>
+            </a>
+            <a class="nav-item" id="nav-expenses" href="expenses.html">
+                <i class="fa-solid fa-money-bill-wave"></i>
+                <span class="nav-text">Expenses</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-badge">
+                <i class="fa-solid fa-circle-user"></i>
+                <span id="logged-in-user">Admin</span>
+            </div>
+            <a class="nav-item logout-item" id="nav-logout" href="#" onclick="ejayLogout(); return false;">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span class="nav-text">Log Out</span>
+            </a>
+        </div>
+    </aside>
+
+    <div class="main-wrapper">
+
+        <header class="top-navbar">
+            <div class="page-title" id="current-view-title">Performance Reports Export</div>
+            <div class="date-badge">
+                <i class="fa-regular fa-calendar"></i>
+                <span id="live-date-str">-- --, ----</span>
+            </div>
+        </header>
+
+        <main class="content-body">
+
+            <div class="view-panel active" id="reports-view">
+<div class="glass-card" style="margin-bottom: 30px;">
+<div class="report-filter-bar" style="display: flex; gap: 20px; align-items: flex-end; flex-wrap: wrap;">
+<div class="input-group" style="width: 250px;">
+<label>Filter Statement Month</label>
+<input id="report-month-picker" type="month"/>
+</div>
+<div class="input-group" style="width: 250px;">
+<label>Generate Report For</label>
+<select id="report-user-filter">
+<option value="Overall">Overall</option>
+<option value="Nash">Nash</option>
+<option value="Paul Anthony">Paul Anthony</option>
+<option value="Ninoy">Ninoy</option>
+</select>
+</div>
+<button class="btn btn-muted" id="btn-print-browser">
+<i class="fa-solid fa-print"></i> Print Report
+                        </button>
+<button class="btn btn-violet" id="btn-export-pdf">
+<i class="fa-solid fa-file-pdf"></i> Generate PDF Report
+                        </button>
+</div>
+</div>
+<div class="glass-card">
+<h3 id="report-view-heading" style="margin-bottom: 20px; color: #F5A623; font-weight: 700;">Monthly Breakdown Report</h3>
+<div class="table-responsive">
+<table class="data-table">
+<thead>
+<tr>
+<th>Total Monthly Sales</th>
+<th>Total Cash Collected</th>
+<th>Total GCash Collected</th>
+<th>5% Share (Cash + GCash)</th>
+<th>Unpaid Balances</th>
+<th>Total Transactions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="rep-total-sales" style="font-weight:800; font-size:1.2rem;">₱0.00</td>
+<td id="rep-total-cash" style="color: #10b981; font-weight:700;">₱0.00</td>
+<td id="rep-total-gcash" style="color: #60a5fa; font-weight:700;">₱0.00</td>
+<td id="rep-total-five-percent" style="color: #a78bfa; font-weight:700;">₱0.00</td>
+<td id="rep-total-unpaid" style="color: #ef4444; font-weight:700;">₱0.00</td>
+<td id="rep-total-tx" style="font-weight:700;">0 Records</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+        </main>
+    </div>
+
+    <div id="printable-report-area" style="display: none; background: #ffffff; color: #111827; width: 100%;">
+<div class="pdf-wrapper">
+<div class="pdf-header">
+<div class="pdf-brand-block">
+<div class="pdf-logo-holder">
+<img alt="Logo" class="pdf-logo-img" onerror="this.style.display='none';" src="logo.png"/>
+</div>
+<div class="pdf-company-details"></div>
+</div>
+<div class="pdf-meta-block">
+<div class="pdf-meta-badge">SALES REPORT</div>
+<p><strong>Generated On:</strong> <span id="pdf-generation-timestamp">-</span></p>
+<p><strong>Statement Period:</strong> <span id="pdf-target-month">-</span></p>
+<p><strong>Report For:</strong> <span id="pdf-report-for">Overall</span></p>
+</div>
+</div>
+<div class="pdf-divider"></div>
+<div class="pdf-summary-grid">
+<div class="pdf-card card-gross"><span class="pdf-card-label">GRAND TOTAL</span><span class="pdf-card-value" id="pdf-meta-sales">₱0.00</span></div>
+<div class="pdf-card card-cash"><span class="pdf-card-label">Cash Collected</span><span class="pdf-card-value" id="pdf-meta-cash">₱0.00</span></div>
+<div class="pdf-card card-gcash"><span class="pdf-card-label">GCash Collected</span><span class="pdf-card-value" id="pdf-meta-gcash">₱0.00</span></div>
+<div class="pdf-card card-five-percent"><span class="pdf-card-label">FIVE PERCENT</span><span class="pdf-card-value" id="pdf-meta-five-percent">₱0.00</span></div>
+<div class="pdf-card card-receivable"><span class="pdf-card-label">UNPAID AMOUNT</span><span class="pdf-card-value" id="pdf-meta-unpaid">₱0.00</span></div>
+</div>
+<div class="pdf-table-section">
+<h3>EJAY Printing Services Sales Log</h3>
+<table class="pdf-data-table">
+<thead>
+<tr>
+<th>Date</th>
+<th>Client / Customer</th>
+<th>Contact Number</th>
+<th>PO Ref No.</th>
+<th>Service Description</th>
+<th style="text-align: center;">Qty</th>
+<th class="num-col">Total Gross</th>
+<th style="text-align: center;">Status</th>
+<th>Handled By</th>
+<th class="num-col">Cash Input</th>
+<th class="num-col">GCash Input</th>
+</tr>
+</thead>
+<tbody id="pdf-table-rows-container"></tbody>
+</table>
+</div>
+<div class="pdf-footer-signatures" style="grid-template-columns: repeat(4, 1fr); gap: 20px;">
+<div class="signature-box">
+<div class="sig-line"></div>
+<p class="sig-name">Nash Esguerra</p>
+<p class="sig-role">Prepared by</p>
+</div>
+<div class="signature-box">
+<div class="sig-line"></div>
+<p class="sig-name">Ricardo Cervantes</p>
+<p class="sig-role">Reviewed by</p>
+</div>
+<div class="signature-box">
+<div class="sig-line"></div>
+<p class="sig-name">Jhun Dela Cruz</p>
+<p class="sig-role">Reviewed by</p>
+</div>
+<div class="signature-box">
+<div class="sig-line"></div>
+<p class="sig-name">Paul Anthony Guevarra</p>
+<p class="sig-role">Approved by</p>
+</div>
+</div>
+</div>
+</div>
+
+    <script src="app.js"></script>
+</body>
+</html>

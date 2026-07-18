@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EJAY Printing and Advertising - Sales</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<link href="style.css" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="brand-container">
+            <div class="logo-holder">
+                <img src="logo.png" alt="Logo" class="brand-logo" onerror="this.style.display='none';">
+            </div>
+        </div>
+        <nav class="nav-menu">
+            <a class="nav-item" id="nav-dashboard" href="dashboard.html">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span class="nav-text">Dashboard</span>
+            </a>
+            <a class="nav-item active" id="nav-sales" href="sales-input.html">
+                <i class="fa-solid fa-file-invoice-dollar"></i>
+                <span class="nav-text">Sales Input</span>
+            </a>
+            <a class="nav-item" id="nav-reports" href="reports.html">
+                <i class="fa-solid fa-chart-line"></i>
+                <span class="nav-text">Monthly Report</span>
+            </a>
+            <a class="nav-item" id="nav-po" href="purchase-order.html">
+                <i class="fa-solid fa-file-contract"></i>
+                <span class="nav-text">Purchase Order</span>
+            </a>
+            <a class="nav-item" id="nav-inventory" href="inventory.html">
+                <i class="fa-solid fa-boxes-stacked"></i>
+                <span class="nav-text">Inventory</span>
+            </a>
+            <a class="nav-item" id="nav-expenses" href="expenses.html">
+                <i class="fa-solid fa-money-bill-wave"></i>
+                <span class="nav-text">Expenses</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-badge">
+                <i class="fa-solid fa-circle-user"></i>
+                <span id="logged-in-user">Admin</span>
+            </div>
+            <a class="nav-item logout-item" id="nav-logout" href="#" onclick="ejayLogout(); return false;">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span class="nav-text">Log Out</span>
+            </a>
+        </div>
+    </aside>
+
+    <div class="main-wrapper">
+
+        <header class="top-navbar">
+            <div class="page-title" id="current-view-title">Sales</div>
+            <div class="date-badge">
+                <i class="fa-regular fa-calendar"></i>
+                <span id="live-date-str">-- --, ----</span>
+            </div>
+        </header>
+
+        <main class="content-body">
+
+            <div class="view-panel active" id="sales-input-view">
+<div class="glass-card form-container">
+<form id="sales-master-form">
+<input id="entry-index-id" type="hidden" value=""/>
+<div class="form-grid">
+<div class="input-group">
+<label>Date</label>
+<input id="f-date" required="" type="date"/>
+</div>
+<div class="input-group">
+<label>Client Name</label>
+<input id="f-client" placeholder="Customer / Company Name" required="" type="text"/>
+</div>
+<div class="input-group">
+<label>Contact Number</label>
+<input id="contact-number" placeholder="e.g. 0917XXXXXXX" type="text"/>
+</div>
+<div class="input-group">
+<label>PO No.</label>
+<input id="f-po" placeholder="PO Reference Identifier" required="" type="text"/>
+</div>
+<div class="input-group">
+<label>Type of Service / Print Job</label>
+<input id="f-service" placeholder="Type or specify service manually..." required="" type="text"/>
+</div>
+<div class="input-group">
+<label>Quantity</label>
+<input id="f-qty" min="1" required="" type="number" value="1"/>
+</div>
+<div class="input-group">
+<label>Total Amount (₱)</label>
+<input id="f-amount" min="0" placeholder="0.00" required="" step="0.01" type="number"/>
+</div>
+<div class="input-group">
+<label>Payment Status</label>
+<select id="f-status">
+<option value="Paid">Paid</option>
+<option value="Unpaid">Unpaid</option>
+</select>
+</div>
+<div class="input-group">
+<label>Handled By</label>
+<select id="f-received-by" required>
+<option value="" disabled selected>Select Receiver...</option>
+<option value="Nash">Nash</option>
+<option value="Paul Anthony">Paul Anthony</option>
+<option value="Ninoy">Ninoy</option>
+</select>
+</div>
+<div class="input-group">
+<label>Cash Payment (₱)</label>
+<input id="f-cash" step="0.01" type="number" value="0.00"/>
+</div>
+<div class="input-group">
+<label>GCash Payment (₱)</label>
+<input id="f-gcash" step="0.01" type="number" value="0.00"/>
+</div>
+</div>
+<div class="form-actions">
+<button class="btn btn-muted" id="btn-clear" type="button">
+<i class="fa-solid fa-broom"></i> Clear
+                            </button>
+<button class="btn btn-danger" id="btn-delete-node" style="display:none;" type="button">
+<i class="fa-solid fa-trash-can"></i> Delete
+                            </button>
+<button class="btn btn-violet" id="btn-submit-node" type="submit">
+<i class="fa-solid fa-floppy-disk"></i> Save Record
+                            </button>
+</div>
+</form>
+</div>
+<div class="glass-card">
+<div class="table-controls">
+<h3 style="font-weight: 700; font-size: 1.1rem;">Transaction Master Log</h3>
+<div class="search-wrapper">
+<i class="fa-solid fa-magnifying-glass"></i>
+<input id="table-search-input" placeholder="Search Client, PO, or Service..." type="text"/>
+</div>
+</div>
+<div class="table-responsive">
+<table class="data-table">
+<thead>
+<tr>
+<th>Date</th>
+<th>Client Name</th>
+<th>Contact</th>
+<th>PO No.</th>
+<th>Service Type</th>
+<th>Qty</th>
+<th>Total Amount</th>
+<th>Status</th>
+<th>Handled By</th>
+<th>Cash</th>
+<th>GCash</th>
+<th style="text-align: center;">Actions</th>
+</tr>
+</thead>
+<tbody id="sales-table-body"></tbody>
+</table>
+</div>
+</div>
+</div>
+
+        </main>
+    </div>
+
+    <!-- EDIT MODAL -->
+    <div class="custom-modal edit-modal" id="sales-edit-modal" style="display: none;">
+        <div class="modal-backdrop" onclick="closeSalesEditModal()"></div>
+        <div class="modal-wrapper-box glass-card">
+            <div class="modal-header-section">
+                <h3 id="sales-edit-modal-title" style="color: #F5A623; font-weight: 700;">Edit Sales Record</h3>
+                <button class="btn-close-modal" onclick="closeSalesEditModal()" type="button">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body-content">
+                <form id="sales-edit-form">
+                    <input id="edit-entry-index-id" type="hidden" value=""/>
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label>Date</label>
+                            <input id="edit-f-date" required="" type="date"/>
+                        </div>
+                        <div class="input-group">
+                            <label>Client Name</label>
+                            <input id="edit-f-client" placeholder="Customer / Company Name" required="" type="text"/>
+                        </div>
+                        <div class="input-group">
+                            <label>Contact Number</label>
+                            <input id="edit-contact-number" placeholder="e.g. 0917XXXXXXX" type="text"/>
+                        </div>
+                        <div class="input-group">
+                            <label>PO No.</label>
+                            <input id="edit-f-po" placeholder="PO Reference Identifier" required="" type="text"/>
+                        </div>
+                        <div class="input-group">
+                            <label>Type of Service / Print Job</label>
+                            <input id="edit-f-service" placeholder="Type or specify service manually..." required="" type="text"/>
+                        </div>
+                        <div class="input-group">
+                            <label>Quantity</label>
+                            <input id="edit-f-qty" min="1" required="" type="number" value="1"/>
+                        </div>
+                        <div class="input-group">
+                            <label>Total Amount (₱)</label>
+                            <input id="edit-f-amount" min="0" placeholder="0.00" required="" step="0.01" type="number"/>
+                        </div>
+                        <div class="input-group">
+                            <label>Payment Status</label>
+                            <select id="edit-f-status">
+                                <option value="Paid">Paid</option>
+                                <option value="Unpaid">Unpaid</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+<label>Handled By</label>
+                            <select id="edit-f-received-by" required>
+                                <option value="Nash">Nash</option>
+                                <option value="Paul Anthony">Paul Anthony</option>
+                                <option value="Ninoy">Ninoy</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Cash Payment (₱)</label>
+                            <input id="edit-f-cash" step="0.01" type="number" value="0.00"/>
+                        </div>
+                        <div class="input-group">
+                            <label>GCash Payment (₱)</label>
+                            <input id="edit-f-gcash" step="0.01" type="number" value="0.00"/>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-muted" onclick="closeSalesEditModal()" type="button">
+                            <i class="fa-solid fa-xmark"></i> Cancel
+                        </button>
+                        <button class="btn btn-danger" id="edit-btn-delete" type="button">
+                            <i class="fa-solid fa-trash-can"></i> Delete
+                        </button>
+                        <button class="btn btn-violet" type="submit">
+                            <i class="fa-solid fa-floppy-disk"></i> Update Record
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EJAY Printing and Advertising - Dashboard Summary</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<link href="style.css" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="brand-container">
+            <div class="logo-holder">
+                <img src="logo.png" alt="Logo" class="brand-logo" onerror="this.style.display='none';">
+            </div>
+        </div>
+        <nav class="nav-menu">
+            <a class="nav-item active" id="nav-dashboard" href="dashboard.html">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span class="nav-text">Dashboard</span>
+            </a>
+            <a class="nav-item" id="nav-sales" href="sales-input.html">
+                <i class="fa-solid fa-file-invoice-dollar"></i>
+                <span class="nav-text">Sales Input</span>
+            </a>
+            <a class="nav-item" id="nav-reports" href="reports.html">
+                <i class="fa-solid fa-chart-line"></i>
+                <span class="nav-text">Monthly Report</span>
+            </a>
+            <a class="nav-item" id="nav-po" href="purchase-order.html">
+                <i class="fa-solid fa-file-contract"></i>
+                <span class="nav-text">Purchase Order</span>
+            </a>
+            <a class="nav-item" id="nav-inventory" href="inventory.html">
+                <i class="fa-solid fa-boxes-stacked"></i>
+                <span class="nav-text">Inventory</span>
+            </a>
+            <a class="nav-item" id="nav-expenses" href="expenses.html">
+                <i class="fa-solid fa-money-bill-wave"></i>
+                <span class="nav-text">Expenses</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-badge">
+                <i class="fa-solid fa-circle-user"></i>
+                <span id="logged-in-user">Admin</span>
+            </div>
+            <a class="nav-item logout-item" id="nav-logout" href="#" onclick="ejayLogout(); return false;">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span class="nav-text">Log Out</span>
+            </a>
+        </div>
+    </aside>
+
+    <div class="main-wrapper">
+
+        <header class="top-navbar">
+            <div class="page-title" id="current-view-title">Dashboard Summary</div>
+            <div class="date-badge">
+                <i class="fa-regular fa-calendar"></i>
+                <span id="live-date-str">-- --, ----</span>
+            </div>
+        </header>
+
+        <main class="content-body">
+
+            <div class="view-panel active" id="dashboard-view">
+<div class="glass-card dashboard-chart-card">
+    <div class="chart-header">
+        <div>
+            <h3 class="chart-title">
+                <i class="fa-solid fa-chart-column" style="margin-right: 8px; color: #F5A623;"></i> Sales vs Expenses Summary
+            </h3>
+            <p class="chart-subtitle">Green for Sales, Red for Expenses</p>
+        </div>
+        <div class="chart-toggle">
+            <button class="chart-btn active" data-range="monthly" type="button">Monthly</button>
+            <button class="chart-btn" data-range="yearly" type="button">Yearly</button>
+        </div>
+    </div>
+    <div class="chart-legend">
+        <div class="chart-legend-item"><span class="legend-swatch legend-sales"></span> Sales</div>
+        <div class="chart-legend-item"><span class="legend-swatch legend-expenses"></span> Expenses</div>
+    </div>
+    <div class="chart-viewport">
+        <svg id="dashboard-chart-svg" viewBox="0 0 640 280" role="img" aria-label="Sales and expenses chart"></svg>
+    </div>
+    <div class="chart-empty" id="dashboard-chart-empty" style="display: none;">
+        <i class="fa-solid fa-chart-line"></i>
+        No sales or expenses data yet. Start adding records to see the summary graph.
+    </div>
+</div>
+<div style="margin-bottom: 15px;">
+<h3 style="margin-bottom: 20px; color: #F5A623; font-weight: 700; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 1px;">
+<i class="fa-solid fa-box-archive" style="margin-right: 8px;"></i> Data Archives
+                    </h3>
+<div id="dashboard-monthly-accordion"></div>
+</div>
+</div>
+
+        </main>
+    </div>
+
+    <div class="custom-modal" id="dashboard-modal" style="display: none;">
+<div class="modal-backdrop"></div>
+<div class="modal-wrapper-box glass-card">
+<div class="modal-header-section">
+<h3 id="modal-folder-title" style="color: #F5A623; font-weight: 700;">Month Breakdown</h3>
+<button class="btn-close-modal" id="close-dashboard-modal" type="button">
+<i class="fa-solid fa-xmark"></i>
+</button>
+</div>
+<div class="modal-body-content" id="modal-dynamic-data">
+<!-- Cards and Tables will be loaded here -->
+</div>
+</div>
+</div>
+
+    <script src="app.js"></script>
+</body>
+</html>

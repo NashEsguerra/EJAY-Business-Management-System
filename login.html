@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EJAY Printing and Advertising - Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<link href="style.css" rel="stylesheet"/>
+
+</head>
+<body class="login-body">
+
+    <div class="login-bg-orb login-bg-orb-1"></div>
+    <div class="login-bg-orb login-bg-orb-2"></div>
+    <div class="login-bg-grid"></div>
+
+    <div class="login-wrapper">
+        <div class="login-card glass-card">
+
+            <div class="login-brand">
+                <div class="logo-holder login-logo">
+                    <img src="logo.png" alt="Logo" class="brand-logo" onerror="this.style.display='none';">
+                </div>
+                <h1 class="login-title">EJAY Printing & Advertising</h1>
+                <p class="login-subtitle">Business Management System</p>
+            </div>
+
+            <form id="login-form" autocomplete="off">
+                <div class="input-group">
+                    <label>Email</label>
+                    <input id="login-email" type="text" placeholder="Enter your email" required autofocus />
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <div class="password-field-wrapper">
+                        <input id="login-password" type="password" placeholder="Enter your password" required />
+                        <button type="button" class="btn-toggle-password" id="btn-toggle-password" tabindex="-1">
+                            <i class="fa-solid fa-eye" id="toggle-password-icon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <p class="login-error" id="login-error-msg" style="display:none;">
+                    <i class="fa-solid fa-circle-exclamation"></i> <span id="login-error-text">Invalid email or password.</span>
+                </p>
+
+                <button class="btn btn-violet login-submit-btn" type="submit" id="btn-login-submit">
+                    <i class="fa-solid fa-right-to-bracket"></i> Log In
+                </button>
+            </form>
+
+        </div>
+    </div>
+
+    <script>
+        // Hardcoded credentials for EJAY Printing and Advertising
+        const EJAY_VALID_EMAIL = 'Admin';
+        const EJAY_VALID_PASSWORD = 'Ejay2025';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // If already logged in, redirect to dashboard.
+            if (localStorage.getItem('ejay_auth') === 'true') {
+                window.location.href = 'dashboard.html';
+                return;
+            }
+
+            const loginForm = document.getElementById('login-form');
+            const emailInput = document.getElementById('login-email');
+            const passwordInput = document.getElementById('login-password');
+            const errorMsg = document.getElementById('login-error-msg');
+            const errorText = document.getElementById('login-error-text');
+            const submitBtn = document.getElementById('btn-login-submit');
+            const togglePasswordBtn = document.getElementById('btn-toggle-password');
+            const togglePasswordIcon = document.getElementById('toggle-password-icon');
+
+            togglePasswordBtn.addEventListener('click', () => {
+                const isHidden = passwordInput.type === 'password';
+                passwordInput.type = isHidden ? 'text' : 'password';
+                togglePasswordIcon.classList.toggle('fa-eye');
+                togglePasswordIcon.classList.toggle('fa-eye-slash');
+            });
+
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = emailInput.value.trim();
+                const password = passwordInput.value;
+
+                if (email === EJAY_VALID_EMAIL && password === EJAY_VALID_PASSWORD) {
+                    errorMsg.style.display = 'none';
+                    localStorage.setItem('ejay_auth', 'true');
+                    localStorage.setItem('ejay_user', email);
+
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Logging in...`;
+
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 400);
+                } else {
+                    errorText.innerText = 'Invalid email or password.';
+                    errorMsg.style.display = 'flex';
+                    passwordInput.value = '';
+                    passwordInput.focus();
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>s
