@@ -1346,8 +1346,8 @@ function generatePoPdf(rec) {
         margin:       0,
         filename:     `EJAY_PO_${rec.poNum || 'Draft'}.pdf`,
         image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
-        jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' },
+        html2canvas:  { scale: 2, useCORS: true, letterRendering: true, width: 794 },
+        jsPDF:        { unit: 'px', hotfixes: ['px_scaling'], format: [794, 1122], orientation: 'portrait' },
         pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
     };
 
@@ -1763,6 +1763,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const editEwt = document.getElementById('edit-po-apply-ewt');
     if (editVat) editVat.addEventListener('change', updateEditPoTaxPreview);
     if (editEwt) editEwt.addEventListener('change', updateEditPoTaxPreview);
+    
+    // Add Item Line button in edit modal
+    const editAddItemBtn = document.querySelector('#po-edit-form button[onclick="addEditPoItemLine()"]');
+    if (editAddItemBtn) {
+        editAddItemBtn.addEventListener('click', () => {
+            addEditPoItemLine();
+            updateEditPoTaxPreview();
+        });
+    }
 });
 
 window.triggerPoDirectDelete = function(index) {

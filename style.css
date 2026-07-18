@@ -1510,3 +1510,9 @@ body {
     break-inside: avoid !important;
 }
 
+/* PO No-break sections to prevent page breaks */
+#printable-po-area .po-no-break {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+}
+
